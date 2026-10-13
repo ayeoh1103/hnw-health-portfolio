@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>高净值人群健康画像 · 数据分析作品集</title>
+<style>
+  :root{
+    --bg:#f4f6f9; --card:#ffffff; --ink:#1f2a37; --sub:#5b6675; --muted:#8a94a3;
+    --line:#e6eaf0; --red:#d92b2b; --green:#12967a; --blue:#2f6fdb; --amber:#e08a1e;
+    --purple:#7a5af5; --shadow:0 1px 3px rgba(20,30,50,.06),0 8px 24px rgba(20,30,50,.05);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif;
+    -webkit-font-smoothing:antialiased; line-height:1.65;
+  }
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1240px;margin:0 auto;padding:0 24px}
+
+  /* ---------- nav ---------- */
+  nav{
+    position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);
+    backdrop-filter:blur(10px);border-bottom:1px solid var(--line);
+  }
+  .nav-in{max-width:1240px;margin:0 auto;padding:0 24px;height:58px;display:flex;align-items:center;gap:26px}
+  .nav-in .brand{font-weight:700;letter-spacing:.3px;font-size:15px}
+  .nav-in .brand span{color:var(--red)}
+  .nav-links{display:flex;gap:20px;font-size:13.5px;color:var(--sub);overflow-x:auto}
+  .nav-links a:hover{color:var(--red)}
+  @media(max-width:860px){.nav-links{display:none}}
+
+  /* ---------- hero ---------- */
+  header.hero{
+    background:linear-gradient(135deg,#1f2a37 0%,#2c3a4d 55%,#3a2b2b 100%);
+    color:#fff;padding:56px 0 46px;
+  }
+  .tagline{font-size:12.5px;letter-spacing:2px;color:#c9d2de;text-transform:uppercase}
+  h1{font-size:34px;line-height:1.3;margin:14px 0 10px;font-weight:700;letter-spacing:-.3px}
+  .hero p.lead{max-width:820px;color:#c3ccd9;font-size:15px;margin:0 0 22px}
+  .badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+  .badge{
+    background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
+    padding:5px 12px;border-radius:999px;font-size:12.5px;color:#e8edf4;
+  }
+  .badge.warn{background:rgba(224,138,30,.18);border-color:rgba(224,138,30,.45);color:#ffd9a0}
+  .src{
+    margin-top:26px;padding-top:18px;border-top:1px solid rgba(255,255,255,.14);
+    font-size:12.5px;color:#9aa7b8;display:flex;flex-wrap:wrap;gap:8px 26px;
+  }
+  .src b{color:#d5dde7;font-weight:600}
+
+  /* ---------- sections ---------- */
+  section{padding:52px 0 8px;scroll-margin-top:70px}
+  .sec-head{margin-bottom:22px}
+  .sec-head .kicker{font-size:12px;letter-spacing:2px;color:var(--red);font-weight:700}
+  .sec-head h2{font-size:24px;margin:6px 0 8px;font-weight:700;letter-spacing:-.2px}
+  .sec-head p{margin:0;color:var(--sub);font-size:14px;max-width:900px}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
+  .pad{padding:20px 22px}
+  .grid{display:grid;gap:16px}
+
+  .kpis{grid-template-columns:repeat(auto-fit,minmax(178px,1fr))}
+  .kpi{padding:18px 20px}
+  .kpi .lab{font-size:12.5px;color:var(--muted);display:flex;align-items:center;gap:6px}
+  .kpi .val{font-size:30px;font-weight:700;letter-spacing:-.5px;margin:6px 0 2px}
+  .kpi .val small{font-size:14px;font-weight:600;color:var(--sub);margin-left:2px}
+  .kpi .note{font-size:12px;color:var(--sub)}
+
+  .insights{grid-template-columns:repeat(auto-fit,minmax(268px,1fr))}
+  .insight{padding:20px 22px;border-top:3px solid var(--red)}
+  .insight.g{border-top-color:var(--green)}
+  .insight.b{border-top-color:var(--blue)}
+  .insight.a{border-top-color:var(--amber)}
+  .insight h4{margin:0 0 8px;font-size:15.5px}
+  .insight p{margin:0;font-size:13.5px;color:var(--sub)}
+  .insight .num{font-size:26px;font-weight:700;color:var(--red);margin-bottom:2px}
+  .insight.g .num{color:var(--green)}
+  .insight.b .num{color:var(--blue)}
+  .insight.a .num{color:var(--amber)}
+
+  .metrics{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+  .metric{padding:18px 20px}
+  .metric .top{display:flex;justify-content:space-between;align-items:baseline}
+  .metric .name{font-size:14.5px;font-weight:600}
+  .metric .unit{font-size:11.5px;color:var(--muted)}
+  .metric .big{font-size:28px;font-weight:700;margin:8px 0 4px}
+  .metric .big small{font-size:13px;color:var(--muted);font-weight:500}
+  .metric .row{display:flex;justify-content:space-between;font-size:12.5px;color:var(--sub);padding:3px 0}
+  .metric .flag{
+    margin-top:10px;padding:8px 10px;border-radius:8px;background:#fdf1f1;font-size:12.5px;
+    display:flex;justify-content:space-between;align-items:center;
+  }
+  .metric .flag.ok{background:#eefaf6}
+  .pill{font-weight:700;font-size:13px}
+  .pill.up{color:var(--red)} .pill.down{color:var(--green)}
+
+  .chart{height:360px}
+  .chart.sm{height:300px} .chart.lg{height:560px}
+  .two{grid-template-columns:1.15fr .85fr}
+  .two-eq{grid-template-columns:1fr 1fr}
+  @media(max-width:980px){.two,.two-eq{grid-template-columns:1fr}}
+  .ctitle{font-size:15px;font-weight:700;margin:0 0 2px}
+  .csub{font-size:12.5px;color:var(--muted);margin:0 0 12px}
+
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:right}
+  th:first-child,td:first-child{text-align:left}
+  th{color:var(--sub);font-weight:600;background:#fafbfc;font-size:12.5px}
+  tbody tr:hover{background:#fafbfc}
+  .bar-cell{position:relative;height:16px;background:#f0f2f5;border-radius:4px;overflow:hidden}
+  .bar-cell i{position:absolute;left:0;top:0;bottom:0;background:var(--red);border-radius:4px}
+  .bar-cell i.g{background:var(--green)}
+
+  .seg{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+  .segcard{padding:20px 22px;border-left:4px solid var(--red)}
+  .segcard:nth-child(2){border-left-color:var(--blue)}
+  .segcard:nth-child(3){border-left-color:var(--muted)}
+  .segcard .hd{display:flex;justify-content:space-between;align-items:center}
+  .segcard h4{margin:0;font-size:17px}
+  .segcard .share{font-size:24px;font-weight:700;color:var(--red)}
+  .segcard:nth-child(2) .share{color:var(--blue)}
+  .segcard:nth-child(3) .share{color:var(--muted)}
+  .segcard .desc{font-size:13px;color:var(--sub);margin:8px 0 14px;min-height:44px}
+  .kv{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px}
+  .kv div{background:#fafbfc;border-radius:8px;padding:8px 10px}
+  .kv span{display:block;font-size:11.5px;color:var(--muted)}
+  .kv b{font-size:16px;font-weight:700}
+
+  .use{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+  .usecard{padding:22px}
+  .usecard .ic{
+    width:38px;height:38px;border-radius:10px;background:#fdf1f1;color:var(--red);
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:17px;margin-bottom:12px;
+  }
+  .usecard:nth-child(2) .ic{background:#eaf1fd;color:var(--blue)}
+  .usecard:nth-child(3) .ic{background:#eefaf6;color:var(--green)}
+  .usecard h4{margin:0 0 8px;font-size:16px}
+  .usecard p{margin:0 0 12px;font-size:13.5px;color:var(--sub)}
+  .usecard ul{margin:0;padding-left:18px;font-size:13px;color:var(--sub)}
+  .usecard li{margin-bottom:5px}
+
+  .note{background:#fff8ec;border:1px solid #f3e0bd;border-radius:12px;padding:16px 18px;font-size:13px;color:#6b5426}
+  .note b{color:#8a6a1f}
+  .dict{overflow-x:auto}
+
+  footer{margin-top:46px;padding:26px 0 40px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+  footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-in">
+    <div class="brand">高净值人群健康画像 <span>·</span> 数据分析作品集</div>
+    <div class="nav-links">
+      <a href="#overview">数据集档案</a>
+      <a href="#findings">核心发现</a>
+      <a href="#core">核心指标</a>
+      <a href="#strata">分层对比</a>
+      <a href="#top20">异常榜单</a>
+      <a href="#behavior">行为分层</a>
+      <a href="#use">商业应用</a>
+      <a href="#method">方法说明</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="tagline">DATA PORTFOLIO · HEALTH PROFILE ANALYTICS</div>
+    <h1>高净值人群健康画像数据集<br/>中高端体检人群的健康特征与消费行为分析</h1>
+    <p class="lead">
+      基于「高净值人群健康画像数据集」（覆盖全国 340+ 城市、中高端体检人群）的字段口径，
+      围绕 <b>健康指标分布 · 分层对比 · 异常排名 · 健康管理行为标签</b> 四大维度，
+      完成从数据建模、分层统计到可视化叙事的完整分析链路。
+    </p>
+    <div class="badges">
+      <div class="badge">覆盖 340 个城市</div>
+      <div class="badge">5,000 条个体级记录</div>
+      <div class="badge">20 项健康异常指标</div>
+      <div class="badge">3 类健康管理行为标签</div>
+      <div class="badge">匿名化脱敏</div>
+      <div class="badge warn">演示数据 · 非真实成交数据</div>
+    </div>
+    <div class="src">
+      <div><b>数据来源</b>　SelectDataset 数据产品交易市场 · 产品编号 141</div>
+      <div><b>数据供方</b>　<span id="m-supplier"></span></div>
+      <div><b>上架时间</b>　<span id="m-online"></span></div>
+      <div><b>作品类型</b>　数据分析 + 可视化叙事</div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ 数据集档案 ============ -->
+<section id="overview">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kicker">01 / DATASET PROFILE</div>
+      <h2>数据集档案</h2>
+      <p>数据集聚焦具有较强消费能力与健康管理意识的中高端体检人群，样本以城市白领、企业管理层及高收入自由职业者为主，覆盖全国 340 个城市。</p>
+    </div>
+    <div class="grid kpis" id="kpis"></div>
+    <div class="grid two-eq" style="margin-top:16px">
+      <div class="card pad">
+        <h3 class="ctitle">样本人群构成</h3>
+        <p class="csub">按职业类型与付费方式拆分（单位：%）</p>
+        <div id="chart-occup" class="chart sm"></div>
+      </div>
+      <div class="card pad">
+        <h3 class="ctitle">城市线级分布与样本覆盖</h3>
+        <p class="csub">线级城市数量（个）与样本占比、次均消费对比</p>
+        <div id="chart-city" class="chart sm"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 核心发现 ============ -->
+<section id="findings">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kicker">02 / KEY FINDINGS</div>
+      <h2>核心发现</h2>
+      <p>将人群健康特征与全国平均水平对照后，呈现出"代谢负荷偏高、筛查相关检出率显著领先、感染类指标低于全国"的结构性画像。</p>
+    </div>
+    <div class="grid insights" id="insights"></div>
+  </div>
+</section>
+
+<!-- ============ 核心指标 ============ -->
+<section id="core">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kicker">03 / CORE INDICATORS</div>
+      <h2>核心健康指标画像</h2>
+      <p>体重指数、血压、血糖、血脂四大核心指标的均值、中位数与异常检出率，并与全国平均水平对照。</p>
+    </div>
+    <div class="grid metrics" id="metrics"></div>
+    <div class="card pad" style="margin-top:16px">
+      <h3 class="ctitle">异常检出率：本人群 vs 全国平均</h3>
+      <p class="csub">红色表示高于全国平均水平，绿色表示低于全国平均水平（单位：%）</p>
+      <div id="chart-core" class="chart"></div>
+    </div>
+    <div class="grid two" style="margin-top:16px">
+      <div class="card pad">
+        <h3 class="ctitle">体重指数（BMI）分布</h3>
+        <p class="csub">虚线为超重临界值 BMI = 24</p>
+        <div id="chart-bmi" class="chart sm"></div>
+      </div>
+      <div class="card pad">
+        <h3 class="ctitle">核心指标统计明细</h3>
+        <p class="csub">均值 / 中位数 / P25 / P75</p>
+        <table id="tbl-core"></table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 分层对比 ============ -->
+<section id="strata">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kicker">04 / STRATIFIED ANALYSIS</div>
+      <h2>分层对比分析</h2>
+      <p>按年龄段（25-35 / 36-45 / 46-55 / 56+）、性别、城市线级（一线 / 新一线 / 二线 / 三四线）进行细粒度分层统计。</p>
+    </div>
+    <div class="card pad">
+      <h3 class="ctitle">年龄段 × 核心指标异常检出率</h3>
+      <p class="csub">随年龄递增，血压与血糖异常率呈陡峭上升，血脂异常在中年段即达高位</p>
+      <div id="chart-age" class="chart"></div>
+    </div>
+    <div class="grid two" style="margin-top:16px">
+      <div class="card pad">
+        <h3 class="ctitle">城市线级健康画像雷达</h3>
+        <p class="csub">线级越低，代谢类异常检出率越高（单位：%）</p>
+        <div id="chart-tier" class="chart"></div>
+      </div>
+      <div class="card pad">
+        <h3 class="ctitle">性别差异</h3>
+        <p class="csub">男性代谢与心血管风险更高，女性以甲状腺、乳腺相关问题为主</p>
+        <div id="chart-gender" class="chart"></div>
+      </div>
+    </div>
+    <div class="card pad" style="margin-top:16px">
+      <h3 class="ctitle">分层明细表</h3>
+      <p class="csub">各分层的样本占比、体检频次、次均消费与四项核心异常检出率</p>
+      <div style="overflow-x:auto"><table id="tbl-strata"></table></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TOP20 ============ -->
+<section id="top20">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kicker">05 / ABNORMALITY RANKING</div>
+      <h2>健康异常 TOP 20 榜单</h2>
+      <p>该人群检出率最高的 20 项健康问题，及其与全国平均水平的偏差值（百分点）。菱形标记为全国平均水平参考点。</p>
+    </div>
+    <div class="card pad">
+      <div id="chart-top20" class="chart lg"></div>
+    </div>
+    <div class="card pad" style="margin-top:16px">
+      <h3 class="ctitle">与全国平均水平的偏差值</h3>
+      <p class="csub">正值＝高于全国（红），负值＝低于全国（绿）；单位：百分点（pp）</p>
+      <div id="chart-dev" class="chart lg"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 行为分层 ============ -->
+<section id="behavior">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kicker">06 / BEHAVIOR SEGMENTATION</div>
+      <h2>健康管理行为分层</h2>
+      <p>基于体检频次、加项选择偏好与付费方式，将人群划分为主动筛查型、基础保障型、被动履约型三类，刻画健康管理意识与消费能力差异。</p>
+    </div>
+    <div class="grid two">
+      <div class="card pad">
+        <h3 class="ctitle">行为标签占比</h3>
+        <p class="csub">按样本量加权</p>
+        <div id="chart-behavior" class="chart"></div>
+      </div>
+      <div class="card pad">
+        <h3 class="ctitle">分层特征对比</h3>
+        <p class="csub">体检频次（次/年）与次均消费（元）</p>
+        <div id="chart-seg-metric" class="chart"></div>
+      </div>
+    </div>
+    <div class="grid seg" style="margin-top:16px" id="seg-cards"></div>
+    <div class="card pad" style="margin-top:16px">
+      <h3 class="ctitle">加项（增值检查）选择偏好</h3>
+      <p class="csub">三类人群的加项渗透率对比（单位：%）</p>
+      <div id="chart-addons" class="chart lg"></div>
+    </div>
+    <div class="grid two-eq" style="margin-top:16px">
+      <div class="card pad">
+        <h3 class="ctitle">次均消费分布</h3>
+        <p class="csub">单次体检消费金额区间占比（%）</p>
+        <div id="chart-spend" class="chart sm"></div>
+      </div>
+      <div class="card pad">
+        <h3 class="ctitle">付费方式结构</h3>
+        <p class="csub">个人付费体检占比持续上升，约占样本总量三分之一</p>
+        <div id="chart-pay" class="chart sm"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 商业应用 ============ -->
+<section id="use">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kicker">07 / BUSINESS APPLICATION</div>
+      <h2>数据应用场景</h2>
+      <p>数据集适用于高端保险产品设计、高端健康服务精准营销、药企创新药目标人群定位等商业场景。</p>
+    </div>
+    <div class="grid use" id="use-cards"></div>
+  </div>
+</section>
+
+<!-- ============ 方法说明 ============ -->
+<section id="method">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kicker">08 / METHODOLOGY</div>
+      <h2>方法说明与数据口径</h2>
+      <p>分析链路、指标口径与数据使用声明。</p>
+    </div>
+    <div class="note" style="margin-bottom:16px">
+      <b>数据使用声明：</b><span id="disclaimer"></span>
+      本页面所有图表均由 <code>generate_data.py</code> 可复现生成，个体级模拟数据集见
+      <code>hnw_health_dataset_simulated.csv</code>。真实数据集为数据交易所付费产品，需购买后获取授权数据。
+    </div>
+    <div class="grid two-eq">
+      <div class="card pad">
+        <h3 class="ctitle">分析链路</h3>
+        <ol style="font-size:13.5px;color:var(--sub);padding-left:20px;margin:8px 0 0">
+          <li>依据数据集公开的四类核心维度，设计个体级数据字典（40+ 字段）</li>
+          <li>按年龄段 / 性别 / 城市线级 / 职业 / 付费方式设定人群结构与相关性参数</li>
+          <li>生成个体级记录（含体检频次、加项选择、消费金额、行为标签）</li>
+          <li>按分层维度聚合，计算检出率、均值/中位数/分位数与全国偏差</li>
+          <li>输出结构化统计结果（JSON）并驱动前端可视化叙事</li>
+        </ol>
+      </div>
+      <div class="card pad">
+        <h3 class="ctitle">指标判定口径</h3>
+        <table id="tbl-rule"></table>
+      </div>
+    </div>
+    <div class="card pad dict" style="margin-top:16px">
+      <h3 class="ctitle">数据字典（节选）</h3>
+      <p class="csub">个体级模拟数据集字段说明</p>
+      <table id="tbl-dict"></table>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>高净值人群健康画像 · 数据分析作品集　|　数据源：SelectDataset 数据产品交易市场（产品编号 141）</div>
+    <div>供方：<span id="f-supplier"></span></div>
+  </div>
+</footer>
+
+<script>__ECHARTS_LIB__</script>
+<script>const D = __DASHBOARD_DATA__;</script>
+<script>
+/* ---------------- 通用配置 ---------------- */
+const RED='#d92b2b', GREEN='#12967a', BLUE='#2f6fdb', AMBER='#e08a1e', GRAY='#98a2b3', PURPLE='#7a5af5';
+const FONT='-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif';
+const AXIS={axisLine:{lineStyle:{color:'#dfe4ea'}},axisLabel:{color:'#6b7280',fontSize:11.5,fontFamily:FONT},
+            splitLine:{lineStyle:{color:'#f0f2f5'}},nameTextStyle:{color:'#8a94a3',fontSize:11.5}};
+const TT={trigger:'axis',backgroundColor:'rgba(255,255,255,.97)',borderColor:'#e6eaf0',borderWidth:1,
+          textStyle:{color:'#1f2a37',fontSize:12.5,fontFamily:FONT},extraCssText:'box-shadow:0 6px 20px rgba(20,30,50,.12);border-radius:8px'};
+const charts=[];
+function mk(id,opt){const el=document.getElementById(id);if(!el)return;
+  const c=echarts.init(el,null,{renderer:'canvas'});c.setOption(opt);charts.push(c);return c;}
+window.addEventListener('resize',()=>charts.forEach(c=>c.resize()));
+const fmt=n=>Number(n).toLocaleString('zh-CN');
+
+/* ---------------- 头部信息 ---------------- */
+document.getElementById('m-supplier').textContent=D.meta['供方'];
+document.getElementById('m-online').textContent=D.meta['上架时间'];
+document.getElementById('f-supplier').textContent=D.meta['供方'];
+document.getElementById('disclaimer').textContent=D.meta['声明']+'。';
+
+/* ---------------- KPI ---------------- */
+const ov=D.overview;
+const KPI=[
+  ['覆盖城市',D.meta['覆盖城市'],'个','样本实际覆盖 '+D.meta['样本覆盖城市数']+' 个城市'],
+  ['样本量',fmt(D.meta['样本量']),'条','个体级匿名化记录'],
+  ['个人自费占比',ov['个人自费占比'],'%','个人付费体检比例持续上升'],
+  ['平均年龄',ov['平均年龄'],'岁','25-35 与 36-45 为主力'],
+  ['次均消费',fmt(ov['次均消费']),'元','含基础套餐与加项'],
+  ['平均体检频次',ov['平均体检频次'],'次/年','主动筛查型显著更高'],
+  ['平均加项数',ov['平均加项数'],'项','增值检查项目渗透'],
+  ['至少一项指标异常',ov['至少一项异常'],'%','十大高频异常中任一项'],
+];
+document.getElementById('kpis').innerHTML=KPI.map(k=>
+  `<div class="card kpi"><div class="lab">${k[0]}</div><div class="val">${k[1]}<small>${k[2]}</small></div><div class="note">${k[3]}</div></div>`
+).join('');
+
+/* ---------------- 核心发现 ---------------- */
+const top=D.top20, beh=D.behavior;
+const findThy=top.find(t=>t['问题']==='甲状腺结节'), findHp=top.find(t=>t['问题']==='幽门螺杆菌阳性');
+const findUa=top.find(t=>t['问题']==='尿酸偏高'), findFat=top.find(t=>t['问题']==='脂肪肝');
+const findLung=top.find(t=>t['问题']==='肺结节'), findBmi=top.find(t=>t['问题']==='超重或肥胖');
+const pro=beh.find(b=>b['标签']==='主动筛查型'), pas=beh.find(b=>b['标签']==='被动履约型');
+const INS=[
+  {t:'代谢负荷高于全国', n:'+'+findBmi['偏差'].toFixed(1)+'pp', c:'',
+   d:`超重或肥胖检出率 ${findBmi['检出率']}%，高出全国平均 ${findBmi['偏差']}pp；脂肪肝 ${findFat['检出率']}%（+${findFat['偏差']}pp）、尿酸偏高 ${findUa['检出率']}%（+${findUa['偏差']}pp），构成该人群最突出的健康风险簇。`},
+  {t:'筛查强度推高检出率', n:'+'+findThy['偏差'].toFixed(1)+'pp', c:'b',
+   d:`甲状腺结节 ${findThy['检出率']}%、肺结节 ${findLung['检出率']}%，分别高出全国 ${findThy['偏差']}pp 与 ${findLung['偏差']}pp——高检出率背后是高分辨率影像与低剂量 CT 的高渗透率，属于"筛查强度效应"而非单纯患病率差异。`},
+  {t:'感染类指标显著低于全国', n:findHp['偏差'].toFixed(1)+'pp', c:'g',
+   d:`幽门螺杆菌阳性 ${findHp['检出率']}%，低于全国平均 ${Math.abs(findHp['偏差'])}pp；高血压 ${D.core_compare.find(x=>x['名称']==='高血压')['本群']}% 亦低于全国 27.5%，与人群年龄结构偏年轻、健康干预前置有关。`},
+  {t:'主动筛查型贡献高客单', n:pro['次均消费'].toLocaleString()+'元', c:'a',
+   d:`主动筛查型占 ${pro['占比']}%，次均消费 ${pro['次均消费']} 元，是被动履约型（${pas['次均消费']} 元）的 ${(pro['次均消费']/pas['次均消费']).toFixed(1)} 倍；其个人自费占比 ${pro['个人自费占比']}%，是高端健康服务的核心付费客群。`},
+];
+document.getElementById('insights').innerHTML=INS.map(i=>
+  `<div class="card insight ${i.c}"><div class="num">${i.n}</div><h4>${i.t}</h4><p>${i.d}</p></div>`
+).join('');
+
+/* ---------------- 核心指标卡 ---------------- */
+const NAME_MAP={'BMI':'体重指数 BMI','收缩压':'血压（收缩压）','空腹血糖':'空腹血糖','总胆固醇':'血脂（总胆固醇）'};
+document.getElementById('metrics').innerHTML=D.core.map(c=>{
+  const up=c['偏差']>=0;
+  return `<div class="card metric">
+    <div class="top"><div class="name">${NAME_MAP[c['指标']]||c['指标']}</div><div class="unit">${c['单位']}</div></div>
+    <div class="big">${c['均值']}<small> 均值</small></div>
+    <div class="row"><span>中位数</span><b>${c['中位数']}</b></div>
+    <div class="row"><span>P25</span><b>${c['P25']}</b></div>
+    <div class="row"><span>P75</span><b>${c['P75']}</b></div>
+    <div class="flag ${up?'':'ok'}">
+      <span>${c['异常维度']}检出率 <b>${c['检出率']}%</b></span>
+      <span class="pill ${up?'up':'down'}">全国 ${c['全国参考']}%　${up?'+':''}${c['偏差']}pp</span>
+    </div></div>`;
+}).join('');
+
+/* 图：核心指标 本群 vs 全国 */
+const cc=D.core_compare;
+mk('chart-core',{
+  tooltip:Object.assign({},TT,{formatter:p=>{
+    const a=p[0],b=p[1];const dv=(a.value-b.value).toFixed(1);
+    return `<b>${a.name}</b><br/>本人群：${a.value}%<br/>全国平均：${b.value}%<br/>偏差：<b style="color:${dv>=0?RED:GREEN}">${dv>=0?'+':''}${dv}pp</b>`;}}),
+  legend:{top:0,textStyle:{fontSize:12,color:'#5b6675',fontFamily:FONT},itemWidth:14,itemHeight:9},
+  grid:{left:8,right:16,top:44,bottom:6,containLabel:true},
+  xAxis:Object.assign({type:'category',data:cc.map(d=>d['名称'])},AXIS,{splitLine:{show:false}}),
+  yAxis:Object.assign({type:'value',name:'%',max:60},AXIS),
+  series:[
+    {name:'本人群',type:'bar',data:cc.map(d=>d['本群']),barWidth:26,
+     itemStyle:{color:p=>cc[p.dataIndex]['偏差']>=0?RED:GREEN,borderRadius:[4,4,0,0]},
+     label:{show:true,position:'top',fontSize:11.5,color:'#5b6675',formatter:'{c}%'}},
+    {name:'全国平均',type:'bar',data:cc.map(d=>d['全国']),barWidth:26,
+     itemStyle:{color:'#cfd6e0',borderRadius:[4,4,0,0]},
+     label:{show:true,position:'top',fontSize:11,color:'#98a2b3',formatter:'{c}%'}},
+  ]
+});
+
+/* 图：BMI 分布 */
+const bb=D.bmi_bins;
+mk('chart-bmi',{
+  tooltip:Object.assign({},TT,{formatter:p=>`BMI ${p[0].name}<br/>占比：<b>${p[0].value}%</b>（${fmt(bb[p[0].dataIndex]['人数'])} 人）`}),
+  grid:{left:8,right:16,top:26,bottom:4,containLabel:true},
+  xAxis:Object.assign({type:'category',data:bb.map(b=>b['区间'])},AXIS,{splitLine:{show:false},axisLabel:{color:'#6b7280',fontSize:10.5,rotate:45}}),
+  yAxis:Object.assign({type:'value',name:'占比 %'},AXIS),
+  series:[{type:'bar',data:bb.map(b=>b['占比']),barWidth:'68%',
+    itemStyle:{color:p=>{
+      const lo=parseInt(bb[p.dataIndex]['区间']);
+      if(lo>=28)return RED; if(lo>=24)return AMBER; if(lo<18.5)return BLUE; return GREEN;},borderRadius:[3,3,0,0]},
+    markLine:{silent:true,symbol:'none',data:[{xAxis:'24-25',label:{formatter:'超重线 BMI 24',fontSize:11,color:RED,position:'insideEndTop'},
+      lineStyle:{color:RED,type:'dashed',width:1.4}}]}}]
+});
+
+/* 表：核心指标明细 */
+document.getElementById('tbl-core').innerHTML=
+  `<thead><tr><th>指标</th><th>均值</th><th>中位数</th><th>P25</th><th>P75</th></tr></thead><tbody>`+
+  D.core.map(c=>`<tr><td>${c['指标']}（${c['单位']}）</td><td>${c['均值']}</td><td>${c['中位数']}</td><td>${c['P25']}</td><td>${c['P75']}</td></tr>`).join('')+
+  `</tbody>`;
+
+/* ---------------- 分层 ---------------- */
+const KEYS=['超重/肥胖','血压偏高','血糖偏高','血脂异常'];
+const COLORS=[AMBER,RED,BLUE,PURPLE];
+const ages=D.age_strata.map(a=>a['分层']);
+mk('chart-age',{
+  tooltip:TT, legend:{top:0,textStyle:{fontSize:12,color:'#5b6675',fontFamily:FONT},itemWidth:14,itemHeight:9},
+  grid:{left:8,right:16,top:44,bottom:6,containLabel:true},
+  xAxis:Object.assign({type:'category',data:ages},AXIS,{splitLine:{show:false}}),
+  yAxis:Object.assign({type:'value',name:'检出率 %',max:90},AXIS),
+  series:KEYS.map((k,i)=>({name:k,type:'line',smooth:true,symbol:'circle',symbolSize:7,
+    lineStyle:{width:2.4,color:COLORS[i]},itemStyle:{color:COLORS[i]},
+    data:D.age_strata.map(a=>a['值'][k]),
+    label:{show:true,position:'top',fontSize:10.5,color:COLORS[i],formatter:'{c}'}}))
+});
+mk('chart-tier',{
+  tooltip:Object.assign({},TT,{trigger:'item'}),
+  legend:{bottom:0,textStyle:{fontSize:12,color:'#5b6675',fontFamily:FONT},itemWidth:14,itemHeight:9},
+  radar:{indicator:KEYS.map(k=>({name:k,max:70})),radius:'62%',center:['50%','48%'],
+    axisName:{color:'#5b6675',fontSize:12,fontFamily:FONT},
+    splitLine:{lineStyle:{color:'#e8ecf2'}},splitArea:{areaStyle:{color:['#fbfcfd','#f5f7fa']}},
+    axisLine:{lineStyle:{color:'#e8ecf2'}}},
+  series:[{type:'radar',data:D.tier_strata.map((t,i)=>({
+    name:t['分层'],value:KEYS.map(k=>t['值'][k]),
+    lineStyle:{width:2,color:[RED,AMBER,BLUE,GRAY][i]},itemStyle:{color:[RED,AMBER,BLUE,GRAY][i]},
+    areaStyle:{opacity:.08,color:[RED,AMBER,BLUE,GRAY][i]}}))}]
+});
+const gs=D.gender_strata;
+mk('chart-gender',{
+  tooltip:TT,legend:{top:0,textStyle:{fontSize:12,color:'#5b6675',fontFamily:FONT},itemWidth:14,itemHeight:9},
+  grid:{left:8,right:16,top:44,bottom:6,containLabel:true},
+  xAxis:Object.assign({type:'category',data:KEYS},AXIS,{splitLine:{show:false}}),
+  yAxis:Object.assign({type:'value',name:'检出率 %',max:70},AXIS),
+  series:gs.map((g,i)=>({name:g['分层'],type:'bar',barWidth:24,
+    itemStyle:{color:i===0?BLUE:'#e0698f',borderRadius:[4,4,0,0]},
+    data:KEYS.map(k=>g['值'][k]),label:{show:true,position:'top',fontSize:11,color:'#6b7280',formatter:'{c}%'}}))
+});
+
+/* 分层明细表 */
+let rowsHtml='';
+const sec=(title,arr,extra)=>{
+  arr.forEach(a=>{
+    rowsHtml+=`<tr><td><b>${a['分层']}</b></td><td>${a['样本占比']}%</td><td>${extra(a)}</td>`+
+      KEYS.map(k=>{
+        const v=a['值'][k];
+        return `<td style="width:150px"><div style="display:flex;align-items:center;gap:8px;justify-content:flex-end">
+          <div class="bar-cell" style="width:78px"><i class="${v>=45?'':'g'}" style="width:${Math.min(100,v/70*100)}%"></i></div>
+          <span style="width:38px;text-align:right">${v}%</span></div></td>`;
+      }).join('')+`</tr>`;
+  });
+};
+sec('年龄段',D.age_strata,a=>a['体检频次']+' 次/年');
+sec('城市线级',D.tier_strata,a=>fmt(a['次均消费'])+' 元');
+document.getElementById('tbl-strata').innerHTML=
+  `<thead><tr><th>分层</th><th>样本占比</th><th>频次 / 客单</th>`+KEYS.map(k=>`<th>${k}</th>`).join('')+`</tr></thead><tbody>${rowsHtml}</tbody>`;
+
+/* 职业与城市 */
+const oc=D.occup_stat;
+mk('chart-occup',{
+  tooltip:TT,legend:{top:0,textStyle:{fontSize:12,color:'#5b6675',fontFamily:FONT},itemWidth:14,itemHeight:9},
+  grid:{left:8,right:8,top:44,bottom:6,containLabel:true},
+  xAxis:Object.assign({type:'category',data:oc.map(o=>o['职业'])},AXIS,{splitLine:{show:false},axisLabel:{color:'#6b7280',fontSize:11,interval:0}}),
+  yAxis:[Object.assign({type:'value',name:'占比 %'},AXIS),Object.assign({type:'value',name:'客单 元',max:3000},AXIS,{splitLine:{show:false}})],
+  series:[
+    {name:'人群占比',type:'bar',barWidth:24,data:oc.map(o=>o['占比']),itemStyle:{color:'#b9c6d8',borderRadius:[4,4,0,0]},
+     label:{show:true,position:'top',fontSize:10.5,color:'#8a94a3',formatter:'{c}%'}},
+    {name:'主动筛查型占比',type:'bar',barWidth:24,data:oc.map(o=>o['主动筛查占比']),itemStyle:{color:RED,borderRadius:[4,4,0,0]},
+     label:{show:true,position:'top',fontSize:10.5,color:RED,formatter:'{c}%'}},
+    {name:'次均消费',type:'line',yAxisIndex:1,smooth:true,symbol:'circle',symbolSize:8,
+     data:oc.map(o=>o['次均消费']),lineStyle:{width:2.4,color:AMBER},itemStyle:{color:AMBER},
+     label:{show:true,position:'top',fontSize:10.5,color:AMBER,formatter:'{c}'}}
+  ]
+});
+const ts=D.tier_strata;
+mk('chart-city',{
+  tooltip:TT,legend:{top:0,textStyle:{fontSize:12,color:'#5b6675',fontFamily:FONT},itemWidth:14,itemHeight:9},
+  grid:{left:8,right:8,top:44,bottom:6,containLabel:true},
+  xAxis:Object.assign({type:'category',data:ts.map(t=>t['分层'])},AXIS,{splitLine:{show:false}}),
+  yAxis:[Object.assign({type:'value',name:'城市数 / 占比'},AXIS),Object.assign({type:'value',name:'客单 元'},AXIS,{splitLine:{show:false}})],
+  series:[
+    {name:'城市数量',type:'bar',barWidth:22,data:ts.map(t=>t['城市数']),itemStyle:{color:'#c8d3e2',borderRadius:[4,4,0,0]},
+     label:{show:true,position:'top',fontSize:10.5,color:'#8a94a3',formatter:'{c} 城'}},
+    {name:'样本占比',type:'bar',barWidth:22,data:ts.map(t=>t['样本占比']),itemStyle:{color:BLUE,borderRadius:[4,4,0,0]},
+     label:{show:true,position:'top',fontSize:10.5,color:BLUE,formatter:'{c}%'}},
+    {name:'次均消费',type:'line',yAxisIndex:1,smooth:true,symbol:'circle',symbolSize:8,
+     data:ts.map(t=>t['次均消费']),lineStyle:{width:2.4,color:AMBER},itemStyle:{color:AMBER},
+     label:{show:true,position:'top',fontSize:10.5,color:AMBER,formatter:'{c}'}}
+  ]
+});
+
+/* ---------------- TOP20 ---------------- */
+const t20=D.top20.slice().reverse();
+mk('chart-top20',{
+  tooltip:Object.assign({},TT,{formatter:p=>{
+    const i=D.top20.length-1-p[0].dataIndex;const t=D.top20[i];
+    const nat=p[1]?p[1].value:null;
+    return `<b>#${t['排名']} ${t['问题']}</b><span style="color:#8a94a3">（${t['口径']}·${t['类别']}）</span><br/>
+      本人群检出率：<b>${t['检出率']}%</b><br/>全国平均：${t['全国']}%<br/>
+      偏差：<b style="color:${t['偏差']>=0?RED:GREEN}">${t['偏差']>=0?'+':''}${t['偏差']}pp</b>`;}}),
+  grid:{left:8,right:56,top:14,bottom:6,containLabel:true},
+  xAxis:Object.assign({type:'value',name:'检出率 %',max:80},AXIS),
+  yAxis:Object.assign({type:'category',data:t20.map(t=>t['问题'])},AXIS,{splitLine:{show:false},axisLabel:{color:'#4b5563',fontSize:12}}),
+  series:[
+    {name:'本人群',type:'bar',barWidth:'58%',data:t20.map(t=>t['检出率']),
+     itemStyle:{color:p=>{const t=t20[p.dataIndex];return t['偏差']>=0?RED:GREEN;},borderRadius:[0,4,4,0]},
+     label:{show:true,position:'right',fontSize:11.5,color:'#5b6675',formatter:p=>t20[p.dataIndex]['检出率']+'%'}},
+    {name:'全国平均',type:'scatter',symbol:'diamond',symbolSize:9,
+     data:t20.map(t=>[t['全国'],t['问题']]),itemStyle:{color:'#2f3a4a'},z:10,tooltip:{show:false}}
+  ]
+});
+const t20d=D.top20.slice().reverse();
+mk('chart-dev',{
+  tooltip:Object.assign({},TT,{formatter:p=>{const i=D.top20.length-1-p[0].dataIndex;const t=D.top20[i];
+    return `<b>${t['问题']}</b><br/>偏差：<b style="color:${t['偏差']>=0?RED:GREEN}">${t['偏差']>=0?'+':''}${t['偏差']}pp</b><br/>本人群 ${t['检出率']}%　全国 ${t['全国']}%`;}}),
+  grid:{left:8,right:40,top:14,bottom:6,containLabel:true},
+  xAxis:Object.assign({type:'value',name:'偏差（百分点）',axisLabel:{formatter:'{value}',color:'#6b7280',fontSize:11.5}},AXIS),
+  yAxis:Object.assign({type:'category',data:t20d.map(t=>t['问题'])},AXIS,{splitLine:{show:false},axisLabel:{color:'#4b5563',fontSize:12}}),
+  series:[{type:'bar',barWidth:'58%',
+    data:t20d.map(t=>({value:t['偏差'],
+      label:{position:t['偏差']>=0?'right':'left'},
+      itemStyle:{color:t['偏差']>=0?RED:GREEN,borderRadius:3}})),
+    label:{show:true,fontSize:11.5,color:'#5b6675',
+      formatter:p=>(p.value>=0?'+':'')+p.value+'pp'}}]
+});
+
+/* ---------------- 行为分层 ---------------- */
+mk('chart-behavior',{
+  tooltip:Object.assign({},TT,{trigger:'item',formatter:p=>`<b>${p.name}</b><br/>占比：${p.value}%<br/>人数：${fmt(beh[p.dataIndex]['人数'])} 人`}),
+  legend:{bottom:0,textStyle:{fontSize:12,color:'#5b6675',fontFamily:FONT},itemWidth:14,itemHeight:9},
+  series:[{type:'pie',radius:['46%','72%'],center:['50%','45%'],avoidLabelOverlap:true,
+    itemStyle:{borderColor:'#fff',borderWidth:2},
+    label:{formatter:'{b}\n{c}%',fontSize:12.5,color:'#4b5563',fontFamily:FONT,lineHeight:16},
+    labelLine:{length:12,length2:12},
+    data:beh.map((b,i)=>({name:b['标签'],value:b['占比'],itemStyle:{color:[RED,BLUE,GRAY][i]}}))}]
+});
+mk('chart-seg-metric',{
+  tooltip:TT,legend:{top:0,textStyle:{fontSize:12,color:'#5b6675',fontFamily:FONT},itemWidth:14,itemHeight:9},
+  grid:{left:8,right:8,top:44,bottom:6,containLabel:true},
+  xAxis:Object.assign({type:'category',data:beh.map(b=>b['标签'])},AXIS,{splitLine:{show:false}}),
+  yAxis:[Object.assign({type:'value',name:'次/年',max:2.4},AXIS),Object.assign({type:'value',name:'元',max:5000},AXIS,{splitLine:{show:false}})],
+  series:[
+    {name:'体检频次',type:'bar',barWidth:26,data:beh.map(b=>b['体检频次']),itemStyle:{color:'#b9c6d8',borderRadius:[4,4,0,0]},
+     label:{show:true,position:'top',fontSize:11,color:'#8a94a3',formatter:'{c}'}},
+    {name:'次均消费',type:'line',yAxisIndex:1,smooth:true,symbol:'circle',symbolSize:9,
+     data:beh.map(b=>b['次均消费']),lineStyle:{width:2.6,color:RED},itemStyle:{color:RED},
+     label:{show:true,position:'top',fontSize:11.5,color:RED,formatter:'{c} 元'}},
+    {name:'平均加项数',type:'line',yAxisIndex:0,smooth:true,symbol:'circle',symbolSize:8,
+     data:beh.map(b=>b['加项数量']),lineStyle:{width:2.2,color:AMBER,type:'dashed'},itemStyle:{color:AMBER},
+     label:{show:true,position:'bottom',fontSize:11,color:AMBER,formatter:'{c} 项'}}
+  ]
+});
+const DESC={
+  '主动筛查型':'高频次、多加项、高客单。以企业管理层与高收入自由职业者为主，集中在 36-45 岁与一线/新一线城市，个人自费意愿强，是高端健康服务与高端医疗险的核心客群。',
+  '基础保障型':'年度一次标准套餐，加项以肿瘤标志物与超声升级为主。多为城市中产白领，企业团检与个人自费并存，是最具"向上转化"潜力的中间层。',
+  '被动履约型':'频次不足一年一次、几乎不加项、客单最低。以企业团检驱动为主，健康干预意愿弱，需要通过报告解读、异常提醒等方式激活。',
+};
+document.getElementById('seg-cards').innerHTML=beh.map((b,i)=>`
+  <div class="card segcard">
+    <div class="hd"><h4>${b['标签']}</h4><div class="share">${b['占比']}%</div></div>
+    <p class="desc">${DESC[b['标签']]}</p>
+    <div class="kv">
+      <div><span>体检频次</span><b>${b['体检频次']} <small style="font-size:11px;color:#8a94a3">次/年</small></b></div>
+      <div><span>平均加项</span><b>${b['加项数量']} <small style="font-size:11px;color:#8a94a3">项</small></b></div>
+      <div><span>次均消费</span><b>${fmt(b['次均消费'])} <small style="font-size:11px;color:#8a94a3">元</small></b></div>
+      <div><span>个人自费占比</span><b>${b['个人自费占比']}%</b></div>
+      <div><span>平均年龄</span><b>${b['平均年龄']} <small style="font-size:11px;color:#8a94a3">岁</small></b></div>
+      <div><span>一线+新一线</span><b>${b['一线及新一线占比']}%</b></div>
+    </div>
+  </div>`).join('');
+
+const ad=D.addons.slice().reverse();
+mk('chart-addons',{
+  tooltip:TT,legend:{top:0,textStyle:{fontSize:12,color:'#5b6675',fontFamily:FONT},itemWidth:14,itemHeight:9},
+  grid:{left:8,right:16,top:44,bottom:6,containLabel:true},
+  xAxis:Object.assign({type:'value',name:'渗透率 %',max:80},AXIS),
+  yAxis:Object.assign({type:'category',data:ad.map(a=>a['项目'])},AXIS,{splitLine:{show:false},axisLabel:{color:'#4b5563',fontSize:11.5}}),
+  series:[
+    {name:'主动筛查型',type:'bar',barWidth:'22%',data:ad.map(a=>a['主动筛查型']),itemStyle:{color:RED,borderRadius:[0,3,3,0]},
+     label:{show:true,position:'right',fontSize:10.5,color:'#8a94a3',formatter:'{c}'}},
+    {name:'基础保障型',type:'bar',barWidth:'22%',data:ad.map(a=>a['基础保障型']),itemStyle:{color:BLUE,borderRadius:[0,3,3,0]},
+     label:{show:true,position:'right',fontSize:10.5,color:'#8a94a3',formatter:'{c}'}},
+    {name:'被动履约型',type:'bar',barWidth:'22%',data:ad.map(a=>a['被动履约型']),itemStyle:{color:GRAY,borderRadius:[0,3,3,0]},
+     label:{show:true,position:'right',fontSize:10.5,color:'#8a94a3',formatter:'{c}'}}
+  ]
+});
+mk('chart-spend',{
+  tooltip:Object.assign({},TT,{trigger:'item',formatter:p=>`${p.name}<br/>占比：<b>${p.value}%</b>`}),
+  grid:{left:8,right:16,top:20,bottom:6,containLabel:true},
+  xAxis:Object.assign({type:'category',data:D.spend_dist.map(s=>s['区间'])},AXIS,{splitLine:{show:false},axisLabel:{fontSize:11,color:'#6b7280'}}),
+  yAxis:Object.assign({type:'value',name:'占比 %'},AXIS),
+  series:[{type:'bar',barWidth:'52%',data:D.spend_dist.map(s=>s['占比']),
+    itemStyle:{color:p=>[GRAY,'#9fb2c6',BLUE,AMBER,RED][p.dataIndex],borderRadius:[4,4,0,0]},
+    label:{show:true,position:'top',fontSize:11,color:'#6b7280',formatter:'{c}%'}}]
+});
+mk('chart-pay',{
+  tooltip:Object.assign({},TT,{trigger:'item',formatter:p=>`${p.name}<br/>占比：<b>${p.value}%</b>`}),
+  legend:{bottom:0,textStyle:{fontSize:12,color:'#5b6675',fontFamily:FONT},itemWidth:14,itemHeight:9},
+  series:[{type:'pie',radius:['42%','68%'],center:['50%','44%'],
+    itemStyle:{borderColor:'#fff',borderWidth:2},
+    label:{formatter:'{b}\n{c}%',fontSize:12,color:'#4b5563',fontFamily:FONT,lineHeight:16},
+    data:D.pay_stat.map((p,i)=>({name:p['方式'],value:p['占比'],itemStyle:{color:[RED,BLUE,GRAY][i]}}))}]
+});
+
+/* ---------------- 商业应用 ---------------- */
+const USE=[
+  {i:'险',t:'高端保险产品设计',c:'',
+   p:'基于分层异常检出率与行为标签，支撑高端医疗险的责任设计与风险定价。',
+   l:['按年龄段/城市线级设定差异化核保与保费区间',
+      '将"主动筛查型"作为高保额、覆盖深度筛查责任的目标客群',
+      '以 TOP20 异常榜单的偏差值校准特定疾病的赔付概率与除外责任']},
+  {i:'营',t:'高端健康服务精准营销',c:'b',
+   p:'依据加项偏好与消费能力，匹配套餐组合与触达策略，提升客单价与复购。',
+   l:['主动筛查型主推肿瘤早筛、基因检测、影像升级等高毛利加项',
+      '基础保障型以"报告解读 + 1-2 项精准加项"实现向上转化',
+      '被动履约型通过异常提醒与健康管理计划激活复检']},
+  {i:'药',t:'药企创新药目标人群定位',c:'g',
+   p:'结合疾病谱与人群分布，圈定创新药上市后的目标人群与区域优先级。',
+   l:['代谢类（脂肪肝/尿酸/血脂）人群在 36-45 岁、三四线城市密度最高',
+      '按城市线级 × 检出率偏差，规划区域学术推广与临床试验入组站点',
+      '以筛查强度高的城市作为早筛类产品的首发市场']},
+];
+document.getElementById('use-cards').innerHTML=USE.map(u=>
+  `<div class="card usecard"><div class="ic">${u.i}</div><h4>${u.t}</h4><p>${u.p}</p><ul>${u.l.map(x=>`<li>${x}</li>`).join('')}</ul></div>`
+).join('');
+
+/* ---------------- 口径与字典 ---------------- */
+const RULES=[
+  ['超重或肥胖','BMI ≥ 24 kg/m²'],['肥胖','BMI ≥ 28 kg/m²'],
+  ['高血压','收缩压 ≥ 140 或舒张压 ≥ 90 mmHg'],
+  ['血压偏高','收缩压 ≥ 130 或舒张压 ≥ 85 mmHg'],
+  ['空腹血糖偏高','空腹血糖 ≥ 6.1 mmol/L'],
+  ['血脂异常','TC ≥ 5.2 或 TG ≥ 1.7 或 LDL-C ≥ 3.4 或 HDL-C < 1.0 mmol/L'],
+  ['尿酸偏高','男性 > 420 μmol/L，女性 > 360 μmol/L'],
+];
+document.getElementById('tbl-rule').innerHTML=
+  `<thead><tr><th>指标</th><th style="text-align:left">判定口径</th></tr></thead><tbody>`+
+  RULES.map(r=>`<tr><td>${r[0]}</td><td style="text-align:left">${r[1]}</td></tr>`).join('')+`</tbody>`;
+const DICT=[
+  ['年龄段 / 年龄','分层维度','25-35 / 36-45 / 46-55 / 56+，年龄为区间内随机取值'],
+  ['性别 / 城市线级 / 城市','分层维度','城市线级：一线、新一线、二线、三四线；城市池 340 个'],
+  ['职业类型 / 付费方式','人群属性','城市白领、企业管理层、高收入自由职业者、其他；个人自费 / 企业团检 / 家庭套餐'],
+  ['BMI / 血压 / 血糖 / 血脂四项 / 尿酸','核心指标','连续型生理指标，含均值、中位数与分位数统计'],
+  ['超重、高血压、血脂异常等 21 项','异常标记','0/1 布尔标记，按公开临床口径判定'],
+  ['体检频次 / 加项数量 / 次均消费','消费行为','次/年、加项个数、单次消费金额（元）'],
+  ['行为标签','衍生标签','主动筛查型 / 基础保障型 / 被动履约型，由频次、加项、付费方式综合判定'],
+];
+document.getElementById('tbl-dict').innerHTML=
+  `<thead><tr><th>字段组</th><th style="text-align:left">类别</th><th style="text-align:left">说明</th></tr></thead><tbody>`+
+  DICT.map(d=>`<tr><td>${d[0]}</td><td style="text-align:left">${d[1]}</td><td style="text-align:left">${d[2]}</td></tr>`).join('')+`</tbody>`;
+</script>
+</body>
+</html>
